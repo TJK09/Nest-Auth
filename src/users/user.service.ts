@@ -23,4 +23,8 @@ export class UserService{
         return this.UserModel.findById(id);
     }
 
+    async updateRefreshToken(email: string, refreshToken: string | null): Promise<void> {
+        await this.UserModel.findOneAndUpdate({email}, { refreshToken: refreshToken });
+    }
+
 }

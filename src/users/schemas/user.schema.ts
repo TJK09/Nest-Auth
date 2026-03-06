@@ -7,16 +7,16 @@ export type UserDocument = User & Document;
 
 export class User {
     @Prop({ required: true, unique: true })
-    username: string;
+    username!: string;
 
     @Prop({ required: true, unique: true, lowercase: true })
-    email: string;
+    email!: string;
 
     @Prop({ required: true, })
-    password: string;
+    password!: string;
 
     @Prop ({ default: null })
-    refreshToken: string | null;
+    refreshToken!: string | null;
 
 }
 

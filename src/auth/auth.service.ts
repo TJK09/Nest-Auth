@@ -22,7 +22,7 @@ export class AuthService {
         const user = await this.userService.createUser(registerDto.username, registerDto.email, hashedPassword);
 
         const tokens = await this.generateTokens(user.email);
-        await this.userService.updateRefreshToken(user.email, tokens.refreshToken);
+        // await this.userService.updateRefreshToken(user.email, tokens.refreshToken);
 
         return tokens;
     }
@@ -64,10 +64,10 @@ export class AuthService {
         const [accessToken, refreshToken] = await Promise.all([
             this.jwtService.signAsync(payload,{
                 secret: this.configService.get('JWT_ACCESS_SECRET'),
-                expiresIn: this.configService.get('ACCESS_TOKEN_EXPIRATION'),
+                expiresIn: this.configService.get('JWT_ACCESS_EXPIRES_IN'),
             }),
             this.jwtService.signAsync(payload,{
-                secret: this.configService.get('JWT_REFRESH_TOKEN'),
+                secret: this.configService.get('JWT_REFRESH_SECRET'),
                 expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN'),
             }),
         ]);

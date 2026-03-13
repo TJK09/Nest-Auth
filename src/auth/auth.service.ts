@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { UserService } from '../users/user.service';    
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { UserRole } from '../users/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,7 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(registerDto.password, 10);
         const user = await this.userService.createUser(registerDto.username, registerDto.email, hashedPassword);
 
-        const tokens = await this.generateTokens(user.email);
+        const tokens = await this.generateTokens(user.email, user.role);
         // await this.userService.updateRefreshToken(user.email, tokens.refreshToken);
 
         return tokens;
@@ -35,7 +36,7 @@ export class AuthService {
         const passwordMatch = await bcrypt.compare(loginDto.password, user.password);
         if(!passwordMatch) throw new UnauthorizedException('Incorrect Passowrd')
         
-        const tokens = await this.generateTokens(user.email);
+        const tokens = await this.generateTokens(user.email, user.role);
         await this.userService.updateRefreshToken(user.email, tokens.refreshToken);
         
         return tokens;
@@ -52,14 +53,14 @@ export class AuthService {
         const tokenMatch = await bcrypt.compare(refreshToken, user.refreshToken);
         if (!tokenMatch) throw new UnauthorizedException("Invalid Token")
         
-        const tokens = await this.generateTokens(user.email);
+        const tokens = await this.generateTokens(user.email, user.role);
         await this.userService.updateRefreshToken(user.email, tokens.refreshToken);
         return tokens;
 
     }
     
-    private async generateTokens(email: string){
-        const payload = { sub: email};
+    private async generateTokens(email: string, role:UserRole){
+        const payload = { sub: email, role};
 
         const [accessToken, refreshToken] = await Promise.all([
             this.jwtService.signAsync(payload,{

@@ -24,7 +24,7 @@ export class Appointment{
     description!: string
 
     @Prop({ type: mongoose.Schema.Types.String, enum:AppointmentStatus, default:AppointmentStatus.PENDING})
-    stauts!: AppointmentStatus
+    status!: AppointmentStatus
 
     @Prop({type : Types.ObjectId, ref: 'User', required: true})
     createdBy!: Types.ObjectId
